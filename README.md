@@ -52,6 +52,12 @@ TRAVEL_ITINERARY_AI/
 ├── Video Demo/
 │   └── AI_Travel_Itinerary_Demo.mp4
 ```
+## 🎥 Project Demo
+
+A complete walkthrough of the application is available here:
+
+▶️ [Click to Watch Demo](https://drive.google.com/file/d/19RBOM_6IZ6zwnXqgEd2xcqaGdnNVDEng_wjsWttb7LI/preview)
+
 
 ## ⚙️ How to Run Locally
 
