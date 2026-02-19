@@ -1,9 +1,10 @@
 
+'''
 import streamlit as st
 import google.generativeai as genai
 
 # Configure API key
-api_key = "AIzaSyBz2oMkDEv_hbEOXvNtrvW4C-Y5DTAXuX4"
+api_key = "*********************"
 genai.configure(api_key=api_key)
 
 # Function to generate a travel itinerary based on user input
@@ -63,6 +64,87 @@ def main():
                 st.error(f"An error occurred: {e}")
         else:
             st.error("Please make sure all inputs are provided and valid.")
+
+
+if __name__ == "__main__":
+    main()
+'''
+
+import streamlit as st
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get API key from .env
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    st.error("API key not found. Please set GEMINI_API_KEY in your .env file.")
+    st.stop()
+
+# Configure Gemini
+genai.configure(api_key=api_key)
+
+
+# Function to generate itinerary
+def generate_itinerary(destination, days, nights):
+
+    generation_config = {
+        "temperature": 0.4,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="models/gemini-2.5-flash",
+        generation_config=generation_config,
+    )
+
+    prompt = f"""
+    Create a detailed travel itinerary for:
+
+    Destination: {destination}
+    Days: {days}
+    Nights: {nights}
+
+    Include:
+    - Day-wise plan
+    - Places to visit
+    - Food suggestions
+    - Travel tips
+    """
+
+    response = model.generate_content(prompt)
+
+    return response.text
+
+
+def main():
+    st.title("Travel Itinerary Generator")
+
+    destination = st.text_input("Enter your desired destination:")
+    days = st.number_input("Enter the number of days:", min_value=1)
+    nights = st.number_input("Enter the number of nights:", min_value=0)
+
+    if st.button("Generate Itinerary"):
+
+        if destination.strip():
+
+            with st.spinner("Generating your itinerary... ✈️"):
+                try:
+                    itinerary = generate_itinerary(destination, days, nights)
+                    st.text_area("Generated Itinerary:", itinerary, height=300)
+
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
+
+        else:
+            st.warning("Please enter a destination.")
 
 
 if __name__ == "__main__":
